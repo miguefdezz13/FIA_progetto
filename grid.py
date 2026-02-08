@@ -8,9 +8,7 @@ import random
 from .cell import Cell, TerrainType
 import sys
 import os
-
-ROWS = 20
-COLS = 20
+import config
 
 
 class Grid:
@@ -87,16 +85,12 @@ class Grid:
         # Ensure Start is clear
         self.cells[0][0].terrain_type = TerrainType.NORMAL
             
-    def smooth_map(self):
-        # Disabled for fixed map
-        pass
-
     def get_neighbors_8(self, r, c):
         """Get 8-way neighbors for CA smoothing."""
         n = []
         for dr in [-1, 0, 1]:
             for dc in [-1, 0, 1]:
-                if dr == 0 and dc == 0: continue
+                if dr == 0 and dc == 0: continue #
                 nr, nc = r + dr, c + dc
                 if 0 <= nr < self.rows and 0 <= nc < self.cols:
                     n.append((nr, nc))
