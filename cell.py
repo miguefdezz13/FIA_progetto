@@ -7,11 +7,8 @@ Defines the Cell class which represents a single tile on the grid.
 from enum import Enum
 import sys
 import os
+import config
 
-
-COST_TRAP = 5  # High cost for traps (for pathfinding)
-COST_MUD = 3   # Higher cost for mud (for pathfinding)
-COST_NORMAL = 1 # Standard cost for normal terrain
 
 class TerrainType(Enum):
     NORMAL = 1

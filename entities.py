@@ -7,11 +7,8 @@ Handles position, energy management, and types.
 
 import sys
 import os
+import config
 
-ENERGY_COST_MUD = 2  # Higher cost for moving through mud
-ENERGY_COST_MOVE = 1  # Standard cost for moving through normal terrain 
-RECHARGE_ANTEATER = 3  # Anteater recovers faster
-RECHARGE_ANT = 1  # Ant recovers slower
 
 class Entity:
     def __init__(self, r, c, max_energy, recharge_rate, name="Entity"):
