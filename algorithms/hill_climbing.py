@@ -19,8 +19,6 @@ If we get stuck (local optimum), we accept a bad move with probability P.
 
 
 import random
-import math
-import sys
 import os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
