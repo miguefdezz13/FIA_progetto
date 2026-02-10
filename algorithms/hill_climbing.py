@@ -16,6 +16,3 @@ We will attempt to generate a full path or a sequence of moves by iterating.
 If we get stuck (local optimum), we accept a bad move with probability P.
 """
 
-
-def manhattan_distance(a, b):
-    return abs(a.r - b.r) + (a.c - b.c) 
