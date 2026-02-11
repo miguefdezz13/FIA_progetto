@@ -7,8 +7,8 @@ Handles position, energy management, and types.
 
 import sys
 import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import config
-
 
 class Entity:
     def __init__(self, r, c, max_energy, recharge_rate, name="Entity"):
@@ -29,7 +29,7 @@ class Entity:
         """
         Moves to a target cell if enough energy is available.
         """
-        #If recovering, we skip turn (simulate in main logic by not calling move)
+        # If recovering, we skip turn (simulate in main logic by not calling move)
         if self.recovering:
             self.recharge()
             return False
@@ -37,11 +37,11 @@ class Entity:
         t_name = cell.terrain_type.name
         
         if t_name == "MUD":
-            energy_cost = ENERGY_COST_MUD
+            energy_cost = config.ENERGY_COST_MUD
         elif t_name == "WALL":
             return False
         else:
-            energy_cost = ENERGY_COST_MOVE
+            energy_cost = config.ENERGY_COST_MOVE
         
         # Check affordability
         if self.energy >= energy_cost:
@@ -68,8 +68,8 @@ class Entity:
 
 class Anteater(Entity):
     def __init__(self, r, c):
-        super().__init__(r, c, ANTEATER_MAX_ENERGY, RECHARGE_ANTEATER, "Anteater")
+        super().__init__(r, c, config.ANTEATER_MAX_ENERGY, config.RECHARGE_ANTEATER, "Anteater")
 
 class Ant(Entity):
     def __init__(self, r, c):
-        super().__init__(r, c, ANT_MAX_ENERGY, RECHARGE_ANT, "Ant")
+        super().__init__(r, c, config.ANT_MAX_ENERGY, config.RECHARGE_ANT, "Ant")

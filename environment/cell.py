@@ -7,8 +7,10 @@ Defines the Cell class which represents a single tile on the grid.
 from enum import Enum
 import sys
 import os
-import config
 
+# Add parent directory to path to import config
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+import config
 
 class TerrainType(Enum):
     NORMAL = 1
@@ -31,11 +33,11 @@ class Cell:
     def cost(self):
         if self.terrain_type == TerrainType.NORMAL:
             # Note: config.COST_NORMAL/MUD are weights for pathfinding
-            return COST_NORMAL
+            return config.COST_NORMAL
         elif self.terrain_type == TerrainType.MUD:
-            return COST_MUD
+            return config.COST_MUD
         elif self.terrain_type == TerrainType.TRAP:
-            return COST_TRAP
+            return config.COST_TRAP
         elif self.terrain_type == TerrainType.WALL:
             return float('inf')
         return 1
@@ -44,6 +46,5 @@ class Cell:
     def is_lethal(self):
         return self.terrain_type == TerrainType.TRAP
 
-    # String representation for debugging, for example: Cell(2, 3, MUD)
     def __repr__(self):
         return f"Cell({self.r}, {self.c}, {self.terrain_type.name})"

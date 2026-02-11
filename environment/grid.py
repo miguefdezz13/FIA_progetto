@@ -8,11 +8,12 @@ import random
 from .cell import Cell, TerrainType
 import sys
 import os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import config
 
-
 class Grid:
-    def __init__(self, rows=ROWS, cols=COLS):
+    def __init__(self, rows=config.ROWS, cols=config.COLS):
         self.rows = rows
         self.cols = cols
         self.cells = [[Cell(r, c) for c in range(cols)] for r in range(rows)]
@@ -85,12 +86,16 @@ class Grid:
         # Ensure Start is clear
         self.cells[0][0].terrain_type = TerrainType.NORMAL
             
+    def smooth_map(self):
+        # Disabled for fixed map
+        pass
+
     def get_neighbors_8(self, r, c):
         """Get 8-way neighbors for CA smoothing."""
         n = []
         for dr in [-1, 0, 1]:
             for dc in [-1, 0, 1]:
-                if dr == 0 and dc == 0: continue #
+                if dr == 0 and dc == 0: continue
                 nr, nc = r + dr, c + dc
                 if 0 <= nr < self.rows and 0 <= nc < self.cols:
                     n.append((nr, nc))
@@ -121,47 +126,33 @@ class Grid:
         
     def update_scent(self, ants):
         """
-        Updates the 'pheromone_level' using BFS (Dijkstra) propagation.
+        Updates the 'pheromone_level' using centralized Multi-Source BFS.
         Scent should NOT pass through walls and should decay with distance.
         """
-        # Reset
+        # 1. Reset Scent
         for r in range(self.rows):
             for c in range(self.cols):
                 self.cells[r][c].pheromone_level = 0.0
         
-        # Multi-Source BFS
-        queue = []
-        visited = set()
-        
+        # 2. Prepare Sources for BFS
+        # Only active (alive) ants produce scent
+        sources = []
         for ant in ants:
             if ant.is_alive:
-                cell = self.cells[ant.r][ant.c]
-                cell.pheromone_level = 20.0 # Max Scent
-                queue.append((cell, 20.0))
-                visited.add((ant.r, ant.c))
+                sources.append((self.cells[ant.r][ant.c], 20.0))
         
-        while queue:
-            # SAFETY CHECK: Prevent infinite loops
-            # In a 20x20 grid, BFS shouldn't take more than ~400 expansions.
-            # But we re-visit nodes due to noise. Let's cap at 5000.
-            if len(visited) > 10000: # Just a sanity clamp
-                 break
-                 
-            current, level = queue.pop(0)
-            
-            if level <= 1: continue # Decay limit
-            
-            next_level = level - 1 # Linear decay per step
-            
-            neighbors = self.get_neighbors(current)
-            for n in neighbors:
-                # Scent blocked only by Walls (handled by get_neighbors)
-                    
-                if (n.r, n.c) not in visited:
-                    # Update scent
-                    n.pheromone_level = next_level
-                    visited.add((n.r, n.c))
-                    queue.append((n, next_level))
+        if not sources:
+            return
+
+        # 3. Call Centralized BFS Algorithm
+        # We must import inside or at top. Using local import for simplicity as requested.
+        from algorithms.pathfinding import multi_source_bfs
+        
+        scent_map = multi_source_bfs(self, sources, 20.0)
+        
+        # 4. Apply Results
+        for (r, c), level in scent_map.items():
+            self.cells[r][c].pheromone_level = level
 
     def get_cell(self, r, c):
         if 0 <= r < self.rows and 0 <= c < self.cols:
