@@ -52,8 +52,11 @@ Repository Structure
         entities.py: Classes for the Ant Eater and Ants.
 
         cell.py: Terrain types and their properties.
+        
+    assets/: Different images (ant.png anteater.png and mud.png)
 
     utils/: Auxiliary utilities.
+    
         visualization.py: Tool for the graphical interface
 Usage
     Controls:
